@@ -8,4 +8,8 @@ const pool = new Pool({
   port,
 });
 
-module.exports = pool;
+const retrieveProductQA = () => pool.query('SELECT question_id, question_body, question_date, asker_name, helpfulness, reported FROM questions WHERE product_id = 1');
+
+module.exports = {
+  retrieveProductQA,
+}
