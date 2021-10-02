@@ -1,5 +1,8 @@
+const express = require('express');
 const app = require('express')();
-const { fetchProductQ, fetchA, fetchP } = require('../database/index.js');
+const { fetchProductQ, fetchA, fetchP, postQuest } = require('../database/index.js');
+
+app.use(express.json());
 
 app.get('/qa/questions/:product_id', (req, res) => {
   fetchProductQ(req.params.product_id)
@@ -29,16 +32,20 @@ app.get('/qa/questions/:question_id/answers', (req, res) => {
     .then(({ rows }) => {
       rows.forEach((answer, i) => {
         fetchP(answer.answer_id)
-          .then((photos) => answer.photos = photos.rows)
+          .then((photos) => {
+            answer.photos = photos.rows;
+            if (i === rows.length - 1) res.send({ question_id: req.params.question_id, results: rows })
+          })
           .catch((err) => console.log(err))
-        if (i === rows.length - 1) res.send({question_id: req.params.question_id, results: rows})
       })
     })
     .catch((err) => console.log(err))
 });
 
 app.post('/qa/questions', (req, res) => {
-
+  postQuest(req.body)
+    .then(() => res.sendStatus(201))
+    .catch((err) => console.log(err))
 });
 
 app.post('/qa/questions/:question_id/answers', (req, res) => {

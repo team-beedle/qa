@@ -2,11 +2,11 @@ CREATE TABLE questions (
  question_id BIGSERIAL NOT NULL,
  product_id INTEGER NOT NULL,
  question_body VARCHAR(1000) NOT NULL,
- question_date BIGINT NOT NULL,
+ question_date BIGINT NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW()) * 1000,
  asker_name VARCHAR(60) NOT NULL,
  asker_email VARCHAR(60) NOT NULL,
- reported BIT NOT NULL,
- question_helpfulness INTEGER NOT NULL
+ reported INTEGER NOT NULL DEFAULT 0,
+ question_helpfulness INTEGER NOT NULL DEFAULT 0
 );
 
 
@@ -16,11 +16,11 @@ CREATE TABLE answers (
  answer_id BIGSERIAL NOT NULL,
  question_id INTEGER NOT NULL,
  body VARCHAR(1000) NOT NULL,
- "date" BIGINT NOT NULL,
+ "date" BIGINT NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW()) * 1000,
  answerer_name VARCHAR(60) NOT NULL,
  answerer_email VARCHAR(60) NOT NULL,
- reported BIT NOT NULL,
- helpfulness INTEGER NOT NULL
+ reported INTEGER NOT NULL DEFAULT 0,
+ helpfulness INTEGER NOT NULL DEFAULT 0
 );
 
 
