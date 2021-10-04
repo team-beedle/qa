@@ -30,17 +30,19 @@ app.get('/qa/questions/:product_id', (req, res) => {
 });
 
 app.get('/qa/questions/:question_id/answers', (req, res) => {
-  fetchA(req.params.question_id)
+  const output = { question_id: req.params.question_id };
+  fetchA(output.question_id)
     .then(({ rows }) => {
-      rows.forEach((answer, i) => {
+      output.results = rows;
+      return Promise.all(output.results.map((answer, i) => (
         fetchP(answer.answer_id)
           .then((photos) => {
             answer.photos = photos.rows;
-            if (i === rows.length - 1) res.send({ question_id: req.params.question_id, results: rows })
           })
           .catch((err) => console.log(err))
-      })
+      )))
     })
+    .then(() => res.send(output))
     .catch((err) => console.log(err))
 });
 
