@@ -5,25 +5,27 @@ const { fetchProductQ, fetchA, fetchP, postQuest } = require('../database/index.
 app.use(express.json());
 
 app.get('/qa/questions/:product_id', (req, res) => {
-  fetchProductQ(req.params.product_id)
-    .then(({ rows }) => (
-      rows.forEach((question, i) => (
-       fetchA(question.question_id)
+  const output = { product_id: req.params.product_id };
+  fetchProductQ(output.product_id)
+    .then(({ rows }) => {
+      output.results = rows;
+      return Promise.all(output.results.map((question, i) => (
+        fetchA(question.question_id)
           .then((answer) => {
             question.answers = {};
-            answer.rows.forEach((answer) => {
+            return Promise.all(answer.rows.map((answer) => {
               question.answers[answer.answer_id] = answer;
               return fetchP(answer.answer_id)
                 .then((photo) => {
                   answer.photos = photo.rows;
-                  if (i === rows.length - 1) res.send({product_id: req.params.product_id, results: rows})
                 })
                 .catch((err) => console.log(err))
-            })
+            }))
           })
           .catch((err) => console.log(err))
-      ))
-    ))
+      )))
+          .then(() => res.send(output))
+    })
     .catch((err) => console.log(err))
 });
 
