@@ -19,7 +19,7 @@ const productQAQuery = {
 const aQuery = {
   name: 'a-query',
   text: `
-    SELECT answer_id, question_id, body, date, answerer_name, helpfulness
+    SELECT answer_id, question_id, body, date, answerer_name, reported, helpfulness
     FROM answers
     WHERE question_id = $1`,
 }

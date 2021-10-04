@@ -14,19 +14,23 @@ app.get('/qa/questions/:product_id', (req, res) => {
           .then((answer) => {
             question.answers = {};
             return Promise.all(answer.rows.map((answer) => {
+              if (answer.reported) return;
               question.answers[answer.answer_id] = answer;
               return fetchP(answer.answer_id)
                 .then((photo) => {
                   answer.photos = photo.rows;
                 })
-                .catch((err) => console.log(err))
+                .catch((err) => res.sendStatus(500))
             }))
           })
-          .catch((err) => console.log(err))
+          .catch((err) => res.sendStatus(500))
       )))
-          .then(() => res.send(output))
+          .then(() => {
+            output.results = output.results.filter((question) => !question.reported)
+            res.send(output)
+          })
     })
-    .catch((err) => console.log(err))
+    .catch((err) => res.sendStatus(500))
 });
 
 app.get('/qa/questions/:question_id/answers', (req, res) => {
@@ -39,17 +43,20 @@ app.get('/qa/questions/:question_id/answers', (req, res) => {
           .then((photos) => {
             answer.photos = photos.rows;
           })
-          .catch((err) => console.log(err))
+          .catch((err) => res.sendStatus(500))
       )))
     })
-    .then(() => res.send(output))
-    .catch((err) => console.log(err))
+    .then(() => {
+      output.results = output.results.filter((answer) => !answer.reported)
+      res.send(output)
+    })
+    .catch((err) => res.sendStatus(500))
 });
 
 app.post('/qa/questions', (req, res) => {
   postQuest(req.body)
     .then(() => res.sendStatus(201))
-    .catch((err) => console.log(err))
+    .catch((err) => res.sendStatus(500))
 });
 
 app.post('/qa/questions/:question_id/answers', (req, res) => {
