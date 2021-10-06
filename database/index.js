@@ -71,6 +71,16 @@ const repQuest = {
   text: 'UPDATE questions SET reported = $1 WHERE question_id = $2',
 }
 
+const answerHelpful = {
+  name: 'answer-helpful',
+  text: 'SELECT helpfulness from answers WHERE answer_id = $1',
+}
+
+const updateAHelpful = {
+  name: 'update-a-helpful',
+  text: 'UPDATE answers SET helpfulness = $1 WHERE answer_id = $2',
+}
+
 const fetchProductQ = (productId) => pool.query(productQAQuery, [productId]);
 
 const fetchA = (questionId) => pool.query(aQuery, [questionId]);
@@ -105,6 +115,14 @@ const markQuestion = (questionId) => (
 
 const reportQuestion = (questionId) => pool.query(repQuest, [true, questionId])
 
+const markA = (answerId) => (
+  pool.query(answerHelpful, [answerId])
+    .then(({ rows }) => {
+      pool.query(updateAHelpful, [rows[0].helpfulness + 1, answerId])
+    })
+    .catch((err) => console.log(err))
+)
+
 module.exports = {
   fetchProductQ,
   fetchA,
@@ -113,4 +131,5 @@ module.exports = {
   postAns,
   markQuestion,
   reportQuestion,
+  markA,
 }

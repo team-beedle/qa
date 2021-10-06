@@ -1,6 +1,15 @@
 const express = require('express');
 const app = require('express')();
-const { fetchProductQ, fetchA, fetchP, postQuest, postAns, markQuestion, reportQuestion } = require('../database/index.js');
+const {
+  fetchProductQ,
+  fetchA,
+  fetchP,
+  postQuest,
+  postAns,
+  markQuestion,
+  reportQuestion,
+  markA
+} = require('../database/index.js');
 
 app.use(express.json());
 
@@ -79,7 +88,9 @@ app.put('/qa/questions/:question_id/report', (req, res) => {
 });
 
 app.put('/qa/answers/:answer_id/helpful', (req, res) => {
-
+  markA(req.params.answer_id)
+    .then(() => res.sendStatus(204))
+    .catch((err) => res.sendStatus(500))
 });
 
 app.put('qa/asnwers/:answer_id/report', (req, res) => {
