@@ -8,7 +8,8 @@ const {
   postAns,
   markQuestion,
   reportQuestion,
-  markA
+  markA,
+  reportA
 } = require('../database/index.js');
 
 app.use(express.json());
@@ -93,8 +94,10 @@ app.put('/qa/answers/:answer_id/helpful', (req, res) => {
     .catch((err) => res.sendStatus(500))
 });
 
-app.put('qa/asnwers/:answer_id/report', (req, res) => {
-
+app.put('/qa/answers/:answer_id/report', (req, res) => {
+  reportA(req.params.answer_id)
+    .then(() => res.sendStatus(204))
+    .catch((err) => res.sendStatus(500))
 });
 
 const PORT = 3000;
