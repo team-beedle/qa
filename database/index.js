@@ -56,6 +56,16 @@ const postAnsQuery = {
   `,
 }
 
+const questionHelpful = {
+  name: 'question-helpful',
+  text: 'SELECT question_helpfulness from questions WHERE question_id = $1',
+}
+
+const updateQuestionHelpful = {
+  name: 'update-question-helpful',
+  text: 'UPDATE questions SET question_helpfulness = $1 WHERE question_id = $2',
+}
+
 const fetchProductQ = (productId) => pool.query(productQAQuery, [productId]);
 
 const fetchA = (questionId) => pool.query(aQuery, [questionId]);
@@ -80,10 +90,19 @@ const postAns = ({body, name, email, question_id, photos}) => (
     .catch((err) => console.log(err))
 );
 
+const markQuestion = (questionId) => (
+  pool.query(questionHelpful, [questionId])
+    .then(({ rows }) => {
+      pool.query(updateQuestionHelpful, [rows[0].question_helpfulness + 1, questionId])
+    })
+    .catch((err) => console.log(err))
+);
+
 module.exports = {
   fetchProductQ,
   fetchA,
   fetchP,
   postQuest,
   postAns,
+  markQuestion,
 }
