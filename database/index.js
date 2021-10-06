@@ -31,7 +31,7 @@ const pQuery = {
 
 const fetchAId = {
   name: 'fetch-a-id',
-  text: 'SELECT answer_id FROM answers WHERE question_id = $1 AND body = $2',
+  text: 'SELECT answer_id FROM answers ORDER BY answer_id DESC LIMIT 1',
 }
 
 const postPhoto = {
@@ -69,7 +69,7 @@ const postQuest = ({ body, name, email, product_id}) => (
 const postAns = ({body, name, email, question_id, photos}) => (
   pool.query(postAnsQuery, [Number(question_id), body, name, email])
     .then(() => (
-      pool.query(fetchAId, [question_id, body])
+      pool.query(fetchAId)
         .then(({ rows }) => {
           photos.forEach((photo) => {
             pool.query(postPhoto, [Number(rows[0].answer_id), photo])
