@@ -15,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/team-beedle/qa.git"
+    "url": "git+https://github.com/team-beedle/questions-and-answers.git"
   },
   "author": "Kevin Gao",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/team-beedle/qa/issues"
+    "url": "https://github.com/team-beedle/questions-and-answers/issues"
   },
-  "homepage": "https://github.com/team-beedle/qa#readme"
+  "homepage": "https://github.com/team-beedle/questions-and-answers#readme"
 }
